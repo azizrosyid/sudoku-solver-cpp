@@ -51,15 +51,15 @@ bool solveSudoku(int (&sudoku)[9][9]) {
     // Find empty number in sudoku and store coordinate in array
     findEmptyNumber(sudoku, coordinateEmpty, lengthCoordinateEmpty);
 
+    // extract first empty number
+    int rowIndexFirst = coordinateEmpty[0][0];
+    int columIndexFirst = coordinateEmpty[0][1];
+
     // loop until all coordinateEmpty solved
     for (int i = 0; i < lengthCoordinateEmpty;) {
         // extract rowIndex and columnIndex in coordinate
         int rowIndex = coordinateEmpty[i][0];
         int columnIndex = coordinateEmpty[i][1];
-
-        // first empty number
-        int rowIndexFirst = coordinateEmpty[0][0];
-        int columIndexFirst = coordinateEmpty[0][1];
 
         // increament empty number sudoku
         sudoku[rowIndex][columnIndex] += 1;
@@ -67,6 +67,7 @@ bool solveSudoku(int (&sudoku)[9][9]) {
         // if number is 10 then reset number to empty and goto previous number
         // goto previous because number now is conflict to another number
         if (sudoku[rowIndex][columnIndex] == 10) {
+            // if the first empty number is 10, then no solution for this sudoku and return false
             if (sudoku[rowIndexFirst][columIndexFirst] == 10) {
                 return false;
             }
