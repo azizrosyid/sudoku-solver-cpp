@@ -8,6 +8,7 @@ bool validateColumn(const int (&)[9][9], const int (&)[2], int);
 bool validateNumber(int (&)[9][9], int (&)[2], int);
 void printSudoku(int (&)[9][9]);
 void findEmptyNumber(const int (&)[9][9], int (&)[9 * 9][2], int &);
+bool solveSudoku(int (&)[9][9]);
 
 int main() {
     // World Hardest Sudoku
@@ -26,12 +27,29 @@ int main() {
     printSudoku(sudokuUnsolved);
     cout << endl;
 
+    // solve the unsolved sudoku
+    // if the solve sudoku return true, all empty number in sudoku have been filled
+    // if return false, sudoku dont have solution, because human error when creating sudoku unsolved
+    if (solveSudoku(sudokuUnsolved) == true) {
+        cout << "Solved Sudoku : " << endl;
+        // pretty print sudoku solved
+        printSudoku(sudokuUnsolved);
+        cout << endl;
+    } else {
+        cout << "No Solution For this Sudoku!" << endl;
+    }
+
+    return 0;
+}
+
+// function to solve sudoku
+bool solveSudoku(int (&sudoku)[9][9]) {
     // Initiate array to store coordinate empty number in sudoku
     int coordinateEmpty[9 * 9][2];
     // Store length of array coordinateEmpty
     int lengthCoordinateEmpty = 0;
     // Find empty number in sudoku and store coordinate in array
-    findEmptyNumber(sudokuUnsolved, coordinateEmpty, lengthCoordinateEmpty);
+    findEmptyNumber(sudoku, coordinateEmpty, lengthCoordinateEmpty);
 
     // loop until all coordinateEmpty solved
     for (int i = 0; i < lengthCoordinateEmpty;) {
@@ -39,25 +57,29 @@ int main() {
         int rowIndex = coordinateEmpty[i][0];
         int columnIndex = coordinateEmpty[i][1];
 
+        // first empty number
+        int rowIndexFirst = coordinateEmpty[0][0];
+        int columIndexFirst = coordinateEmpty[0][1];
+
         // increament empty number sudoku
-        sudokuUnsolved[rowIndex][columnIndex] += 1;
+        sudoku[rowIndex][columnIndex] += 1;
 
         // if number is 10 then reset number to empty and goto previous number
         // goto previous because number now is conflict to another number
-        if (sudokuUnsolved[rowIndex][columnIndex] == 10) {
-            sudokuUnsolved[rowIndex][columnIndex] = 0;
+        if (sudoku[rowIndex][columnIndex] == 10) {
+            if (sudoku[rowIndexFirst][columIndexFirst] == 10) {
+                return false;
+            }
+
+            sudoku[rowIndex][columnIndex] = 0;
             i--;
         }
         //validate number to save in sudoku, if valid goto next empty number
-        else if (validateNumber(sudokuUnsolved, coordinateEmpty[i], sudokuUnsolved[rowIndex][columnIndex])) {
+        else if (validateNumber(sudoku, coordinateEmpty[i], sudoku[rowIndex][columnIndex])) {
             i++;
         }
     }
-
-    cout << "Solved Sudoku : " << endl;
-    // pretty print sudoku solved
-    printSudoku(sudokuUnsolved);
-    return 0;
+    return true;
 }
 
 // function to validate number in block
@@ -72,7 +94,7 @@ bool validateBlock(const int (&sudoku)[9][9], const int (&coordinate)[2], const 
         for (int columnIndex = 0; columnIndex < 3; columnIndex++) {
             int row = rowIndex + coordinateBlock[0];
             int column = columnIndex + coordinateBlock[1];
-            
+
             // if number in row same as number to save, then number can't save in sudoku
             // exclude if the position number to check same as number to save
             if (sudoku[row][column] == number && !(row == coordinate[0] && column == coordinate[1])) {
