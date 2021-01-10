@@ -86,11 +86,14 @@ bool validateBlock(const int (&sudoku)[9][9], const int (&coordinate)[2], const 
 
 // function to validate number in row
 bool validateRow(int sudoku[9][9], int coordinate[2], int number) {
+    // extract coordinate to variable
+    int row = coordinate[0];
+    int column = coordinate[1];
     // looping number in the row
     for (int columnIndex = 0; columnIndex < 9; columnIndex++) {
         // if number in row same as number to save, then number can't save in sudoku
         // exclude if the position number to check same as number to save
-        if (sudoku[coordinate[0]][columnIndex] == number && !(columnIndex == coordinate[1])) {
+        if (sudoku[row][columnIndex] == number && !(columnIndex == column)) {
             return false;
         }
     }
@@ -100,10 +103,14 @@ bool validateRow(int sudoku[9][9], int coordinate[2], int number) {
 
 // function to validate number in column
 bool validateColumn(const int (&sudoku)[9][9], const int (&coordinate)[2], int number) {
+    // extract coordinate to variable
+    int row = coordinate[0];
+    int column = coordinate[1];
+    // looping number in vertical row (column)
     for (int rowIndex = 0; rowIndex < 9; rowIndex++) {
         // if number in row same as number to save, then number can't save in sudoku
         // exclude if the position number to check same as number to save
-        if (sudoku[rowIndex][coordinate[1]] == number && !(rowIndex == coordinate[0])) {
+        if (sudoku[rowIndex][column] == number && !(rowIndex == row)) {
             return false;
         }
     }
