@@ -1,4 +1,4 @@
-#include <iostream>
+#include <iostream> // cout, cin
 using namespace std;
 
 // function declaration
@@ -9,63 +9,135 @@ bool validateNumber(int (&)[9][9], int (&)[2], int);
 void printSudoku(int (&)[9][9]);
 void findEmptyNumber(const int (&)[9][9], int (&)[9 * 9][2], int &);
 bool solveSudoku(int (&)[9][9]);
+int inputInteger(string);
+void breakLine();
+void resetSudoku(int (&)[9][9]);
+bool inputYesNo(string);
+int inputNumberRange(string, int, int);
 
 int main() {
-    // World Hardest Sudoku
-    int sudokuUnsolved[9][9] = {{8, 0, 0, 0, 0, 0, 0, 0, 0},
-                                {0, 0, 3, 6, 0, 0, 0, 0, 0},
-                                {0, 7, 0, 0, 9, 0, 2, 0, 0},
-                                {0, 5, 0, 0, 0, 7, 0, 0, 0},
-                                {0, 0, 0, 0, 4, 5, 7, 0, 0},
-                                {0, 0, 0, 1, 0, 0, 0, 3, 0},
-                                {0, 0, 1, 0, 0, 0, 0, 6, 8},
-                                {0, 0, 8, 5, 0, 0, 0, 1, 0},
-                                {0, 9, 0, 0, 0, 0, 4, 0, 0}};
+    int choice;
+    do {
+        // main menu
+        cout << "Program Untuk Menyelesaikan Sudoku" << endl
+             << "1. Input Sudoku" << endl
+             << "2. Contoh Sudoku" << endl
+             << "0. Keluar" << endl;
+        choice = inputNumberRange("Pilih : ", 0, 2);
+        if (choice == 1) {
+            int inputSudoku[9][9];
+            resetSudoku(inputSudoku);
+            int choice;
+            do {
+                breakLine();
+                printSudoku(inputSudoku);
+                cout << "Note : Angka Nol merepresentasikan Cell yang kosong." << endl
+                     << "Pilih : " << endl
+                     << "1. Isi Sudoku" << endl
+                     << "2. Selesaikan Sudoku" << endl
+                     << "3. Reset Sudoku" << endl
+                     << "0. Keluar" << endl;
+                choice = inputNumberRange("Masukkan Angka : ", 0, 3);
+                if (choice == 1) {
+                    int row, col, number;
+                    do {
+                        breakLine();
+                        printSudoku(inputSudoku);
+                        row = inputNumberRange("Masukkan Baris : ", 1, 9) - 1;
+                        col = inputNumberRange("Masukkan Kolom : ", 1, 9) - 1;
+                        int coordinate[2] = {row, col};
+                        while (true) {
+                            number = inputNumberRange("Masukkan Angka yang akan di isi : ", 0, 9);
+                            if (validateNumber(inputSudoku, coordinate, number) || number == 0) {
+                                inputSudoku[row][col] = number;
+                                break;
+                            } else {
+                                cout << "Angka yang anda masukkan terjadi konflik" << endl;
+                            }
+                        }
 
-    cout << "Unsolved Sudoku : " << endl;
-    // pretty print sudoku unsolved
-    printSudoku(sudokuUnsolved);
-    cout << endl;
+                        breakLine();
+                        printSudoku(inputSudoku);
 
-    // solve the unsolved sudoku
-    // if the solve sudoku return true, all empty number in sudoku have been filled
-    // if return false, sudoku dont have solution, because human error when creating sudoku unsolved
-    if (solveSudoku(sudokuUnsolved) == true) {
-        cout << "Solved Sudoku : " << endl;
-        // pretty print sudoku solved
-        printSudoku(sudokuUnsolved);
-        cout << endl;
-    } else {
-        cout << "No Solution For this Sudoku!" << endl;
-    }
+                    } while (inputYesNo("Apakah Anda ingin mengisi lagi ? Y/N : "));
+                } else if (choice == 2) {
+                    solveSudoku(inputSudoku);
+                } else if (choice == 3) {
+                    resetSudoku(inputSudoku);
+                } else if (choice != 0) {
+                    cout << "Pilihan Tidak Ada." << endl;
+                    cin.ignore();
+                    cin.ignore();
+                }
 
-    // easy sudoku
-    int sudokuUnsolved2[9][9] = {{0, 7, 0, 0, 0, 0, 0, 6, 8},
-                                 {0, 4, 0, 0, 0, 2, 0, 1, 9},
-                                 {1, 5, 6, 0, 0, 4, 7, 0, 0},
-                                 {0, 1, 4, 6, 7, 0, 9, 0, 0},
-                                 {0, 0, 3, 5, 0, 0, 0, 0, 6},
-                                 {0, 0, 0, 9, 0, 3, 8, 4, 0},
-                                 {0, 0, 7, 3, 0, 0, 0, 0, 0},
-                                 {0, 8, 9, 0, 0, 6, 0, 5, 7},
-                                 {0, 0, 0, 0, 0, 0, 0, 0, 0}};
+            } while (choice != 0);
+        } else if (choice == 2) {
+            int sudokuUnsolved[5][9][9] = {
+                {{8, 0, 0, 0, 0, 0, 0, 0, 0},
+                 {0, 0, 3, 6, 0, 0, 0, 0, 0},
+                 {0, 7, 0, 0, 9, 0, 2, 0, 0},
+                 {0, 5, 0, 0, 0, 7, 0, 0, 0},
+                 {0, 0, 0, 0, 4, 5, 7, 0, 0},
+                 {0, 0, 0, 1, 0, 0, 0, 3, 0},
+                 {0, 0, 1, 0, 0, 0, 0, 6, 8},
+                 {0, 0, 8, 5, 0, 0, 0, 1, 0},
+                 {0, 9, 0, 0, 0, 0, 4, 0, 0}},
+                {{0, 7, 0, 0, 0, 0, 0, 6, 8},
+                 {0, 4, 0, 0, 0, 2, 0, 1, 9},
+                 {1, 5, 6, 0, 0, 4, 7, 0, 0},
+                 {0, 1, 4, 6, 7, 0, 9, 0, 0},
+                 {0, 0, 3, 5, 0, 0, 0, 0, 6},
+                 {0, 0, 0, 9, 0, 3, 8, 4, 0},
+                 {0, 0, 7, 3, 0, 0, 0, 0, 0},
+                 {0, 8, 9, 0, 0, 6, 0, 5, 7},
+                 {0, 0, 0, 0, 0, 0, 0, 0, 0}},
+                {{9, 0, 0, 0, 8, 0, 0, 0, 1},
+                 {0, 0, 0, 4, 0, 6, 0, 0, 0},
+                 {0, 0, 5, 0, 7, 0, 3, 0, 0},
+                 {0, 6, 0, 0, 0, 0, 0, 4, 0},
+                 {4, 0, 1, 0, 6, 0, 5, 0, 8},
+                 {0, 9, 0, 0, 0, 0, 0, 2, 0},
+                 {0, 0, 7, 0, 3, 0, 2, 0, 0},
+                 {0, 0, 0, 7, 0, 5, 0, 0, 0},
+                 {1, 0, 0, 0, 4, 0, 0, 0, 7}},
+                {{0, 0, 8, 0, 3, 0, 5, 4, 0},
+                 {3, 0, 0, 4, 0, 7, 9, 0, 0},
+                 {4, 1, 0, 0, 0, 8, 0, 0, 2},
+                 {0, 4, 3, 5, 0, 2, 0, 6, 0},
+                 {5, 0, 0, 0, 0, 0, 0, 0, 8},
+                 {0, 6, 0, 3, 0, 9, 4, 1, 0},
+                 {1, 0, 0, 8, 0, 0, 0, 2, 7},
+                 {0, 0, 5, 6, 0, 3, 0, 0, 4},
+                 {0, 2, 9, 0, 7, 0, 8, 0, 0}},
+                {{0, 4, 6, 0, 0, 0, 0, 0, 0},
+                 {9, 0, 2, 0, 6, 0, 0, 0, 8},
+                 {0, 0, 8, 4, 0, 0, 2, 5, 0},
+                 {0, 0, 0, 8, 0, 0, 0, 7, 0},
+                 {5, 0, 0, 7, 0, 2, 0, 0, 3},
+                 {0, 1, 0, 0, 0, 6, 0, 0, 0},
+                 {0, 6, 4, 0, 0, 3, 9, 0, 0},
+                 {3, 0, 0, 0, 8, 0, 1, 0, 2},
+                 {0, 0, 0, 0, 0, 0, 7, 3, 0}}};
+            int choiceSudoku;
+            breakLine();
+            for (int i = 0; i < 5; i++) {
+                cout << i + 1 << ". " << endl;
+                printSudoku(sudokuUnsolved[i]);
+                cout << endl;
+            }
+            cout << "Note : Angka Nol merepresentasikan Cell yang kosong." << endl;
+            do {
+                choiceSudoku = inputNumberRange("Pilih Sudoku yang ingin diselesaikan : ", 1, 5) - 1;
+                solveSudoku(sudokuUnsolved[choiceSudoku]);
+                printSudoku(sudokuUnsolved[choiceSudoku]);
+            } while (inputYesNo("Apakah anda ingin menyelesaikan sudoku lagi? Y/N : "));
+        } else if (choice != 0) {
+            cout << "Pilihan Tidak Ada." << endl;
+            cin.ignore();
+            cin.ignore();
+        }
 
-    cout << "Unsolved Sudoku : " << endl;
-    // pretty print sudoku unsolved
-    printSudoku(sudokuUnsolved2);
-    cout << endl;
-
-    // solve the unsolved sudoku
-    // if the solve sudoku return true, all empty number in sudoku have been filled
-    // if return false, sudoku dont have solution, because human error when creating sudoku unsolved
-    if (solveSudoku(sudokuUnsolved2) == true) {
-        cout << "Solved Sudoku : " << endl;
-        // pretty print sudoku solved
-        printSudoku(sudokuUnsolved2);
-        cout << endl;
-    } else {
-        cout << "No Solution For this Sudoku!" << endl;
-    }
+    } while (choice != 0);
 
     return 0;
 }
@@ -218,4 +290,59 @@ void findEmptyNumber(const int (&sudokuUnsolved)[9][9], int (&coordinateEmpty)[9
             }
         }
     }
+}
+
+int inputInteger(string message) {
+    int result;
+    while (cout << message && !(cin >> result)) {
+        cout << "Anda salah input, ulangi sampai benar " << endl;
+        cin.clear();
+        cin.ignore(1000, '\n');
+    }
+    cin.ignore();
+    return result;
+}
+
+void breakLine() {
+    cout << endl;
+    cout << "======================" << endl;
+    cout << endl;
+}
+
+void resetSudoku(int (&sudoku)[9][9]) {
+    for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+            sudoku[row][col] = 0;
+        }
+    }
+}
+
+bool inputYesNo(string message) {
+    string input;
+    cout << endl;
+    while (true) {
+        cout << message;
+        getline(cin, input);
+        if (toupper(input[0]) == 'Y') {
+            return true;
+        } else if (toupper(input[0]) == 'N') {
+            return false;
+        } else {
+            cout << "Input Y/N !" << endl;
+        }
+    }
+}
+
+int inputNumberRange(string message, int min, int max) {
+    int result;
+    do {
+        result = inputInteger(message);
+        if (result < min || result > max) {
+            cout << "Masukkan angka " << min << "-" << max << endl;
+        } else {
+            break;
+        }
+
+    } while (true);
+    return result;
 }
